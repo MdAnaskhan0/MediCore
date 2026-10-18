@@ -10,7 +10,7 @@ const sum = a => a.reduce((s, x) => s + x.amount, 0);
 r.get('/dashboard', async (req, res, next) => { try {
   const today = day(new Date()), monthStart = today.slice(0, 8) + '01';
   const wk = new Date(); wk.setDate(wk.getDate() - 6);
-  const [pt, dr, ap, lowMed, lowProd, due, tInc, mInc, mExp, trend, recent, services] = await Promise.all([
+  const [pt, dr, ap, lowMed, lowProd, due, tInc, mInc, mExp, trend, recent, services, reqs] = await Promise.all([
     one('SELECT COUNT(*) n FROM patients'), one("SELECT COUNT(*) n FROM doctors WHERE status = 'Active'"),
     one('SELECT COUNT(*) n FROM appointments WHERE appointment_date = ?', [today]),
     one('SELECT COUNT(*) n FROM medicines WHERE stock <= reorder_level'), one('SELECT COUNT(*) n FROM products WHERE stock <= reorder_level'),
@@ -19,11 +19,12 @@ r.get('/dashboard', async (req, res, next) => { try {
     series(INC, '%Y-%m-%d', day(wk), today),
     pool.query(`SELECT a.id, p.name patient, d.name doctor, a.appointment_date, a.appointment_time, a.status FROM appointments a JOIN patients p ON p.id=a.patient_id JOIN doctors d ON d.id=a.doctor_id ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT 6`).then(x => x[0]),
     one('SELECT COUNT(*) n FROM service_orders WHERE order_date = ?', [today]),
+    one("SELECT COUNT(*) n FROM appointments WHERE status = 'Requested'"),
   ]);
   const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(wk); d.setDate(wk.getDate() + i); const k = day(d); return { date: k, amount: trend[k] || 0 }; });
   res.json({
     stats: { patients: pt.n, doctors: dr.n, appointmentsToday: ap.n, ordersToday: services.n, totalDue: Number(due.n), todayCollection: sum(tInc), monthIncome: sum(mInc), monthExpense: sum(mExp) },
-    alerts: { lowStockMedicines: lowMed.n, lowStockProducts: lowProd.n }, trend: days, recentAppointments: recent,
+    alerts: { lowStockMedicines: lowMed.n, lowStockProducts: lowProd.n, appointmentRequests: reqs.n }, trend: days, recentAppointments: recent,
   });
 } catch (e) { next(e); } });
 

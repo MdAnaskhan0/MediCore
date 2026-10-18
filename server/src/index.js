@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import { pool } from './db.js';
 import crud from './crud.js';
 import insights from './insights.js';
+import { publicRouter, patientAuth, portalRouter } from './portal.js';
 
 const SECRET = process.env.JWT_SECRET || 'dev_secret';
 const app = express();
@@ -21,9 +22,11 @@ app.post('/api/auth/login', async (req, res, next) => { try {
 } catch (e) { next(e); } });
 
 const auth = (req, res, next) => {
-  try { req.user = jwt.verify((req.headers.authorization || '').replace('Bearer ', ''), SECRET); next(); }
+  try { req.user = jwt.verify((req.headers.authorization || '').replace('Bearer ', ''), SECRET); if (req.user.kind === 'patient') throw new Error('patient token'); next(); }
   catch { res.status(401).json({ message: 'Session expired. Please sign in again.' }); }
 };
+app.use('/api/public', publicRouter);
+app.use('/api/portal', patientAuth, portalRouter);
 app.use('/api', auth, insights, crud);
 app.use((err, req, res, next) => { console.error(err); res.status(500).json({ message: err.message }); });
 

@@ -31,3 +31,7 @@ React (Vite) + Redux Toolkit + Tailwind CSS + React-Toastify + React Icons  |  N
 - Each purchase/sale record holds one item (no multi-line invoices yet).
 - Page restriction by role is enforced in the UI; add server-side checks before production use.
 - Set a strong `JWT_SECRET` in `server/.env`.
+
+
+# Next work 
+ - a patient can create a account for take Dr appointment, show his/her medical track, or a gaust patient just take a dr appointment.

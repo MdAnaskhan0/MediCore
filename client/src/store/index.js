@@ -10,6 +10,15 @@ const auth = createSlice({
     logout(s) { s.token = null; s.user = null; localStorage.removeItem('hms_auth'); },
   },
 });
+const savedP = () => { try { return JSON.parse(localStorage.getItem('hms_patient')) || {}; } catch { return {}; } };
+const patient = createSlice({
+  name: 'patient',
+  initialState: { token: savedP().token || null, user: savedP().user || null },
+  reducers: {
+    patientLogin(s, { payload }) { s.token = payload.token; s.user = payload.user; localStorage.setItem('hms_patient', JSON.stringify(payload)); },
+    patientLogout(s) { s.token = null; s.user = null; localStorage.removeItem('hms_patient'); },
+  },
+});
 const ui = createSlice({
   name: 'ui',
   initialState: { sidebarOpen: false },
@@ -17,5 +26,6 @@ const ui = createSlice({
 });
 
 export const { loginSuccess, logout } = auth.actions;
+export const { patientLogin, patientLogout } = patient.actions;
 export const { toggleSidebar, closeSidebar } = ui.actions;
-export default configureStore({ reducer: { auth: auth.reducer, ui: ui.reducer } });
+export default configureStore({ reducer: { auth: auth.reducer, patient: patient.reducer, ui: ui.reducer } });

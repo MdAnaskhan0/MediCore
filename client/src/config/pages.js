@@ -66,9 +66,11 @@ export const pages = [
     fields: [f('name', 'Patient name', 'text', { required: true }), num('age', 'Age', { min: 0 }), opt('gender', 'Gender', ['Male', 'Female', 'Other']), f('phone', 'Phone'),
       opt('blood_group', 'Blood group', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']), f('address', 'Address')] },
   { group: 'Patient Management', key: 'appointments', res: 'appointments', title: 'Appointment management', icon: FiCalendar,
+    hint: 'Requests from the patient portal and from guests arrive as Requested. Set the status to Scheduled to confirm them.',
+    extra: [{ name: 'source', label: 'Booked via' }],
     fields: [ref('patient_id', 'Patient', 'patients', '{name} ({patient_code})', { required: true }), ref('doctor_id', 'Doctor', 'doctors', 'name', { required: true }),
       date('appointment_date', 'Date', TODAY), f('appointment_time', 'Time', 'time'),
-      opt('status', 'Status', ['Scheduled', 'Completed', 'Cancelled'], { default: 'Scheduled' }), f('note', 'Note')] },
+      opt('status', 'Status', ['Requested', 'Scheduled', 'Completed', 'Cancelled'], { default: 'Scheduled' }), f('note', 'Note')] },
 
   // Patient services
   { group: 'Patient Services', key: 'services', res: 'services', title: 'Patient service list', icon: FiList,

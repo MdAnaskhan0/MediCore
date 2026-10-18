@@ -57,6 +57,7 @@ export default function Dashboard() {
         <section className="card p-5">
           <h2 className="font-bold text-ink-900">Needs attention</h2>
           <ul className="mt-4 space-y-3 text-sm">
+            <li className="flex items-center justify-between"><span>Appointment requests to confirm</span><Badge value={d?.alerts.appointmentRequests ?? '…'} tone={d?.alerts.appointmentRequests ? 'amber' : 'green'} /></li>
             <li className="flex items-center justify-between"><span>Medicines at or below reorder level</span><Badge value={d?.alerts.lowStockMedicines ?? '…'} tone={d?.alerts.lowStockMedicines ? 'red' : 'green'} /></li>
             <li className="flex items-center justify-between"><span>Products at or below reorder level</span><Badge value={d?.alerts.lowStockProducts ?? '…'} tone={d?.alerts.lowStockProducts ? 'red' : 'green'} /></li>
             <li className="flex items-center justify-between"><span>Patient dues pending</span><Badge value={s ? money(s.totalDue) : '…'} tone={s?.totalDue ? 'amber' : 'green'} /></li>

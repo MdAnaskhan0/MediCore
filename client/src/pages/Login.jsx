@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FiPlusSquare, FiMail, FiLock } from 'react-icons/fi';
 import api, { errMsg } from '../api';
@@ -28,7 +29,7 @@ export default function Login() {
       </div>
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm">
-          <h2 className="text-2xl font-extrabold text-ink-900">Sign in</h2>
+          <h2 className="text-2xl font-extrabold text-ink-900">Staff sign in</h2>
           <p className="mb-6 mt-1 text-sm text-slate-500">Use the account your administrator created for you.</p>
           <label className="mb-4 block"><span className="mb-1 block text-sm font-semibold">Email</span>
             <div className="relative"><FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -37,6 +38,7 @@ export default function Login() {
             <div className="relative"><FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input className="input pl-9" type="password" required value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div></label>
           <button className="btn-primary w-full" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+          <p className="mt-6 text-center text-sm text-slate-500">Are you a patient? <Link to="/portal" className="font-semibold text-brand-700 hover:underline">Go to the patient portal</Link></p>
         </form>
       </div>
     </div>
