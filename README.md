@@ -35,3 +35,8 @@ React (Vite) + Redux Toolkit + Tailwind CSS + React-Toastify + React Icons  |  N
 
 # Next work 
  - a patient can create a account for take Dr appointment, show his/her medical track, or a gaust patient just take a dr appointment.
+
+ # Next work 
+ - remove stuff login button from patient portal
+ - Patient Portal Home Page UI need more Intersting Slider, Dr Information(Most Popular), Patient service and there Price, Gallary, where all should be managable from admin side. 
+ - Book an appointment form for Dr. select use (Dr. Name field and Dr. Department) to find the spacific Dr. Like I want Dr. X so When I write X in the Name Here I can Show all the Dr who have this name then I will select my choise dr. or I will select the dr department then show all dr on those department I will find Dr. x on this department and select the dr. 
