@@ -2,7 +2,7 @@ import axios from 'axios';
 import store, { logout, patientLogout } from './store';
 
 const api = axios.create({ baseURL: '/api' });
-const isPortal = url => (url || '').startsWith('/portal');
+const isPortal = url => url === '/portal' || (url || '').startsWith('/portal/');
 
 api.interceptors.request.use(cfg => {
   const s = store.getState();

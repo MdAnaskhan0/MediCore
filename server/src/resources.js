@@ -15,14 +15,14 @@ export const resources = {
   },
   employees: { table: 'employees', cols: ['name', 'designation', 'department', 'phone', 'salary', 'join_date', 'status'], search: ['t.name', 't.designation', 't.department'] },
   auditors: { table: 'auditors', cols: ['name', 'email', 'phone', 'status'], search: ['t.name', 't.email'] },
-  doctors: { table: 'doctors', cols: ['name', 'specialization', 'phone', 'email', 'fee', 'commission_percent', 'status'], search: ['t.name', 't.specialization'] },
+  doctors: { table: 'doctors', cols: ['name', 'specialization', 'phone', 'email', 'fee', 'commission_percent', 'status', 'photo_url', 'qualification', 'experience_years', 'bio', 'popular'], search: ['t.name', 't.specialization'] },
   'doctor-payments': { table: 'doctor_payments', cols: ['doctor_id', 'amount', 'method', 'paid_on', 'note'], search: ['t.note'] },
   patients: {
     table: 'patients', cols: ['patient_code', 'name', 'age', 'gender', 'phone', 'blood_group', 'address'], search: ['t.name', 't.patient_code', 't.phone'],
     prepare(d, isNew) { if (isNew && !d.patient_code) d.patient_code = 'PT' + Date.now().toString().slice(-8); },
   },
   appointments: { table: 'appointments', cols: ['patient_id', 'doctor_id', 'appointment_date', 'appointment_time', 'status', 'note'], search: ['t.status', 't.note'] },
-  services: { table: 'services', cols: ['name', 'category', 'price'], search: ['t.name', 't.category'] },
+  services: { table: 'services', cols: ['name', 'category', 'price', 'description', 'show_on_portal'], search: ['t.name', 't.category'] },
   orders: {
     table: 'service_orders', cols: ['patient_id', 'service_id', 'doctor_id', 'order_date', 'amount', 'discount', 'paid'],
     joins: 'LEFT JOIN patients p ON p.id = t.patient_id LEFT JOIN services s ON s.id = t.service_id',
@@ -53,5 +53,7 @@ export const resources = {
   'supplier-payments': { table: 'supplier_payments', cols: ['supplier_id', 'amount', 'method', 'paid_on', 'note'], search: ['t.note'] },
   'medicine-sales': { table: 'medicine_sales', cols: ['customer_name', 'medicine_id', 'qty', 'unit_price', 'sale_date'], search: ['t.customer_name'], effects: stock('medicines', 'medicine_id', -1) },
   'sales-returns': { table: 'sales_returns', cols: ['medicine_id', 'qty', 'refund_amount', 'return_date', 'reason'], search: ['t.reason'], effects: stock('medicines', 'medicine_id', 1) },
+  'portal-slides': { table: 'portal_slides', cols: ['title', 'subtitle', 'image_url', 'button_text', 'button_link', 'sort_order', 'status'], search: ['t.title', 't.subtitle'], order: 't.sort_order, t.id' },
+  'portal-gallery': { table: 'portal_gallery', cols: ['title', 'image_url', 'category', 'sort_order', 'status'], search: ['t.title', 't.category'], order: 't.sort_order, t.id' },
   expenses: { table: 'expenses', cols: ['title', 'category', 'amount', 'expense_date', 'note'], search: ['t.title', 't.category'] },
 };

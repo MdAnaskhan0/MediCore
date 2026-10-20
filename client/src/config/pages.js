@@ -1,7 +1,7 @@
 import {
   FiShield, FiUsers, FiUserCheck, FiBriefcase, FiActivity, FiDollarSign, FiCalendar, FiClipboard, FiTag, FiPercent,
   FiFileText, FiTruck, FiBox, FiPackage, FiShoppingCart, FiRotateCcw, FiCreditCard, FiBarChart2, FiTrendingUp,
-  FiPieChart, FiAlertCircle, FiSend, FiLayers, FiUser, FiList, FiCornerDownLeft, FiDatabase,
+  FiPieChart, FiAlertCircle, FiSend, FiLayers, FiUser, FiList, FiCornerDownLeft, FiDatabase, FiImage, FiCamera,
 } from 'react-icons/fi';
 
 /* ---------- field helpers ---------- */
@@ -10,6 +10,7 @@ const num = (name, label, o = {}) => f(name, label, 'number', o);
 const cash = (name, label, o = {}) => f(name, label, 'number', { money: true, step: '0.01', ...o });
 const date = (name, label, o = {}) => f(name, label, 'date', { today: false, ...o });
 const opt = (name, label, options, o = {}) => f(name, label, 'select', { options, ...o });
+const img = (name, label, o = {}) => f(name, label, 'image', o);
 const ref = (name, label, res, lab = 'name', o = {}) => f(name, label, 'select', { ref: { res, lab }, ...o });
 
 const STATUS = ['Active', 'Inactive'];
@@ -54,8 +55,12 @@ export const pages = [
 
   // Doctor management
   { group: 'Doctor Management', key: 'doctors', res: 'doctors', title: 'Doctor information', icon: FiActivity,
-    fields: [f('name', 'Doctor name', 'text', { required: true }), f('specialization', 'Specialization'), f('phone', 'Phone'), f('email', 'Email', 'email'),
-      cash('fee', 'Consultation fee'), num('commission_percent', 'Commission (%)', { step: '0.01', min: 0, max: 100 }), opt('status', 'Status', STATUS, { default: 'Active' })] },
+    hint: 'Department is what patients filter by when booking online. Set "Show as popular" to Yes to feature the doctor on the portal home page.',
+    fields: [img('photo_url', 'Photo', { maxW: 600 }), f('name', 'Doctor name', 'text', { required: true }), f('specialization', 'Department / specialization', 'text', { required: true, placeholder: 'e.g. Cardiology' }),
+      f('qualification', 'Qualification', 'text', { hide: true, placeholder: 'e.g. MBBS, MD (Cardiology)' }), num('experience_years', 'Experience (years)', { min: 0, hide: true }),
+      f('phone', 'Phone'), f('email', 'Email', 'email', { hide: true }), cash('fee', 'Consultation fee'), num('commission_percent', 'Commission (%)', { step: '0.01', min: 0, max: 100, hide: true }),
+      opt('popular', 'Show as popular on portal', ['Yes', 'No'], { default: 'No' }), opt('status', 'Status', STATUS, { default: 'Active' }),
+      f('bio', 'Short bio (shown on portal)', 'textarea', { hide: true })] },
   { group: 'Doctor Management', key: 'doctor-payments', res: 'doctor-payments', title: 'Doctor payment', icon: FiDollarSign,
     fields: [ref('doctor_id', 'Doctor', 'doctors', 'name', { required: true }), cash('amount', 'Amount', { required: true }), opt('method', 'Method', METHOD, { default: 'Cash' }),
       date('paid_on', 'Payment date', TODAY), f('note', 'Note')] },
@@ -74,7 +79,9 @@ export const pages = [
 
   // Patient services
   { group: 'Patient Services', key: 'services', res: 'services', title: 'Patient service list', icon: FiList,
-    fields: [f('name', 'Service name', 'text', { required: true }), opt('category', 'Category', ['Consultation', 'Pathology', 'Radiology', 'Procedure', 'Other']), cash('price', 'Price', { required: true })] },
+    hint: 'Services marked "Show on portal" appear with their price on the patient portal home page.',
+    fields: [f('name', 'Service name', 'text', { required: true }), opt('category', 'Category', ['Consultation', 'Pathology', 'Radiology', 'Procedure', 'Other']), cash('price', 'Price', { required: true }),
+      f('description', 'Short description', 'text', { hide: true }), opt('show_on_portal', 'Show on portal', ['Yes', 'No'], { default: 'Yes' })] },
   { group: 'Patient Services', key: 'orders', res: 'orders', title: 'Patient list (billing)', icon: FiClipboard,
     hint: 'Pick a service and its price is filled in for you. Outstanding dues are collected under Due collection.',
     extra: [{ name: 'due', label: 'Due', money: true, due: true }],
@@ -139,10 +146,19 @@ export const pages = [
   { group: 'Accounts', key: 'expenses', res: 'expenses', title: 'Expense entry', icon: FiCreditCard,
     fields: [f('title', 'Title', 'text', { required: true }), opt('category', 'Category', ['Utilities', 'Maintenance', 'Salary', 'Supplies', 'Marketing', 'Other']), cash('amount', 'Amount', { required: true }), date('expense_date', 'Date', TODAY), f('note', 'Note')] },
 
+  // Website content (patient portal home page)
+  { group: 'Website Content', key: 'portal-slides', res: 'portal-slides', title: 'Home page slider', icon: FiImage,
+    hint: 'Slides shown at the top of the patient portal. Use a wide image (about 1600 x 600). Lower "Order" numbers appear first; set Status to Inactive to hide a slide.',
+    fields: [img('image_url', 'Slide image', { maxW: 1600 }), f('title', 'Headline', 'text', { required: true }), f('subtitle', 'Sub-headline'), f('button_text', 'Button text', 'text', { placeholder: 'Book an appointment' }),
+      f('button_link', 'Button link', 'text', { placeholder: '/portal/book', hide: true }), num('sort_order', 'Order', { default: 0 }), opt('status', 'Status', STATUS, { default: 'Active' })] },
+  { group: 'Website Content', key: 'portal-gallery', res: 'portal-gallery', title: 'Photo gallery', icon: FiCamera,
+    hint: 'Photos shown in the gallery on the patient portal home page. Lower "Order" numbers appear first.',
+    fields: [img('image_url', 'Photo', { maxW: 1200, required: true }), f('title', 'Caption'), f('category', 'Category', 'text', { placeholder: 'e.g. Facilities' }), num('sort_order', 'Order', { default: 0 }), opt('status', 'Status', STATUS, { default: 'Active' })] },
+
   // Reports
   { group: 'Reports', key: 'report-total', report: 'total', title: 'Total system reports', icon: FiPieChart },
 ];
 
-export const groupOrder = ['Administration', 'Doctor Management', 'Patient Management', 'Patient Services', 'Inventory Setup', 'General Stock', 'Medicine Management', 'Accounts', 'Reports'];
+export const groupOrder = ['Administration', 'Doctor Management', 'Patient Management', 'Patient Services', 'Inventory Setup', 'General Stock', 'Medicine Management', 'Accounts', 'Website Content', 'Reports'];
 export const navGroups = groupOrder.map(name => ({ name, items: pages.filter(p => p.group === name) }));
 export const canSee = (user, key) => !user?.permissions || user.permissions.trim() === '*' || user.permissions.split(',').map(s => s.trim()).includes(key);

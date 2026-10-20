@@ -20,7 +20,6 @@ export default function PortalLayout() {
           </Link>
           <nav className="flex flex-wrap items-center gap-1">
             <NavLink to="/portal/book" className={link}>Book appointment</NavLink>
-            <Link to="/login" className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100">Staff login</Link>
             {user && <>
               <NavLink to="/portal/dashboard" className={link}>My dashboard</NavLink>
               <NavLink to="/portal/appointments" className={link}>Appointments</NavLink>
@@ -36,9 +35,7 @@ export default function PortalLayout() {
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8"><Outlet /></main>
-      <footer className="border-t border-slate-200 py-5 text-center text-sm text-slate-500">
-        Hospital staff? <Link to="/login" className="font-semibold text-brand-700 hover:underline">Sign in to the staff system</Link>
-      </footer>
+      <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-500">© {new Date().getFullYear()} MediCore Hospital. All rights reserved.</footer>
     </div>
   );
 }

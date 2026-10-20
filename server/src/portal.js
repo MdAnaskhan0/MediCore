@@ -51,9 +51,31 @@ async function book(conn, { patient_id, doctor_id, date, time, note, source }) {
 /* ================= PUBLIC (no login) ================= */
 export const publicRouter = Router();
 
+// Doctor finder: filter by name and/or department (specialization)
 publicRouter.get('/doctors', handle(async (req, res) => {
-  const [rows] = await pool.query("SELECT id, name, specialization, fee FROM doctors WHERE status='Active' ORDER BY name");
+  const q = String(req.query.q || '').trim().replace(/^dr\.?\s*/i, '');
+  const w = ["status = 'Active'"], p = [];
+  if (req.query.id) { w.push('id = ?'); p.push(req.query.id); }
+  if (q) { w.push('name LIKE ?'); p.push(`%${q}%`); }
+  if (req.query.department) { w.push('specialization = ?'); p.push(req.query.department); }
+  const [rows] = await pool.query(`SELECT id, name, specialization, fee, photo_url, qualification, experience_years FROM doctors WHERE ${w.join(' AND ')} ORDER BY name LIMIT 30`, p);
   res.json(rows);
+}));
+
+publicRouter.get('/departments', handle(async (req, res) => {
+  const [rows] = await pool.query("SELECT specialization name, COUNT(*) doctors FROM doctors WHERE status = 'Active' AND specialization IS NOT NULL AND specialization <> '' GROUP BY specialization ORDER BY specialization");
+  res.json(rows);
+}));
+
+// Everything the portal home page shows, managed from the admin panel
+publicRouter.get('/home', handle(async (req, res) => {
+  const [[slides], [doctors], [services], [gallery]] = await Promise.all([
+    pool.query("SELECT id, title, subtitle, image_url, button_text, button_link FROM portal_slides WHERE status = 'Active' ORDER BY sort_order, id"),
+    pool.query("SELECT id, name, specialization, fee, photo_url, qualification, experience_years, bio FROM doctors WHERE status = 'Active' AND popular = 'Yes' ORDER BY name LIMIT 8"),
+    pool.query("SELECT id, name, category, price, description FROM services WHERE show_on_portal = 'Yes' ORDER BY category, name"),
+    pool.query("SELECT id, title, image_url, category FROM portal_gallery WHERE status = 'Active' AND image_url IS NOT NULL AND image_url <> '' ORDER BY sort_order, id"),
+  ]);
+  res.json({ slides, doctors, services, gallery });
 }));
 
 publicRouter.get('/slots', handle(async (req, res) => {

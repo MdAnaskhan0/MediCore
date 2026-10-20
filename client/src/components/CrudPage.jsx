@@ -4,6 +4,7 @@ import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiChevronLeft, FiChevronRight, FiI
 import api, { errMsg, money } from '../api';
 import Modal from './Modal';
 import Badge from './Badge';
+import ImageField from './ImageField';
 
 export const tpl = (s, row) => (s.includes('{') ? s.replace(/\{(\w+)\}/g, (_, k) => row[k] ?? '') : row[s] ?? '');
 const todayStr = () => new Date().toLocaleDateString('en-CA');
@@ -82,13 +83,14 @@ export default function CrudPage({ page }) {
 
   const cell = (c, row) => {
     const v = row[c.name];
+    if (c.type === 'image') return v ? <img src={v} alt="" className="h-10 w-14 rounded-md object-cover" /> : '—';
     if (c.ref) return v ? refLabel(c, v) : '—';
     if (v === null || v === undefined || v === '') return '—';
     if (c.name === 'status') return <Badge value={v} />;
     if (c.stock) return Number(v) <= Number(row.reorder_level ?? -1) ? <span className="inline-flex items-center gap-2 font-semibold text-red-600">{v}<Badge value="Low" tone="red" /></span> : v;
     if (c.due) return <span className={Number(v) > 0 ? 'font-semibold text-red-600' : 'text-slate-500'}>{money(v)}</span>;
     if (c.money) return money(v);
-    return v;
+    return <span className="block max-w-[260px] truncate" title={String(v)}>{v}</span>;
   };
 
   const pages = Math.max(1, Math.ceil(total / LIMIT));
@@ -152,10 +154,12 @@ export default function CrudPage({ page }) {
         <Modal title={`${editId ? 'Edit' : 'Add'} · ${page.title}`} onClose={() => setModal(false)}>
           <form onSubmit={save}>
             <div className="grid gap-4 p-6 sm:grid-cols-2">
-              {fields.map(f => (
-                <label key={f.name} className={f.type === 'textarea' ? 'sm:col-span-2' : ''}>
+              {fields.map(f => { const Wrap = f.type === 'image' ? 'div' : 'label'; return (
+                <Wrap key={f.name} className={['textarea', 'image'].includes(f.type) ? 'sm:col-span-2' : ''}>
                   <span className="mb-1 block text-sm font-semibold text-slate-700">{f.label}{f.required && !(editId && f.type === 'password') && <span className="text-red-500"> *</span>}</span>
-                  {f.type === 'select' ? (
+                  {f.type === 'image' ? (
+                    <ImageField value={form[f.name]} maxW={f.maxW} onChange={v => change(f, v)} />
+                  ) : f.type === 'select' ? (
                     <select className="input" value={form[f.name] ?? ''} onChange={e => change(f, e.target.value)}>
                       <option value="">Select…</option>
                       {f.ref ? (refs[f.ref.res] || []).map(r => <option key={r.id} value={r.id}>{tpl(f.ref.lab, r)}</option>)
@@ -168,8 +172,8 @@ export default function CrudPage({ page }) {
                       value={form[f.name] ?? ''} onChange={e => change(f, e.target.value)} />
                   )}
                   {editId && f.hintEdit && <span className="mt-1 block text-xs text-slate-500">{f.hintEdit}</span>}
-                </label>
-              ))}
+                </Wrap>
+              ); })}
             </div>
             <div className="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button type="button" className="btn-ghost" onClick={() => setModal(false)}>Cancel</button>

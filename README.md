@@ -40,3 +40,11 @@ React (Vite) + Redux Toolkit + Tailwind CSS + React-Toastify + React Icons  |  N
  - remove stuff login button from patient portal
  - Patient Portal Home Page UI need more Intersting Slider, Dr Information(Most Popular), Patient service and there Price, Gallary, where all should be managable from admin side. 
  - Book an appointment form for Dr. select use (Dr. Name field and Dr. Department) to find the spacific Dr. Like I want Dr. X so When I write X in the Name Here I can Show all the Dr who have this name then I will select my choise dr. or I will select the dr department then show all dr on those department I will find Dr. x on this department and select the dr. 
+
+
+## Next work 
+ - Need a Footer About Us, Privacy Policy, Our Service, Find a Doctor, Publication, Contact Us create all this page link in the footer, Social Link, Logo, Address, Footer UI in patient portal looks should be professional. 
+
+ - Header UI is also need to be change logo, address and other needed page add in header.
+
+ all should be manageable by the admin side logo, social like, address, publication

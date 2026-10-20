@@ -42,7 +42,7 @@ for (const [name, cfg] of Object.entries(resources)) {
     const where = useQ ? `WHERE (${cfg.search.map(c => `${c} LIKE ?`).join(' OR ')})` : '';
     const p = useQ ? cfg.search.map(() => `%${q}%`) : [];
     const [[{ n }]] = await pool.query(`SELECT COUNT(*) n FROM ${from} ${where}`, p);
-    const [data] = await pool.query(`SELECT ${cfg.select || 't.*'} FROM ${from} ${where} ORDER BY t.id DESC LIMIT ? OFFSET ?`, [...p, limit, offset]);
+    const [data] = await pool.query(`SELECT ${cfg.select || 't.*'} FROM ${from} ${where} ORDER BY ${cfg.order || 't.id DESC'} LIMIT ? OFFSET ?`, [...p, limit, offset]);
     res.json({ data, total: n });
   }));
 
